@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Joel James" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../../../../img/favicon.ico">
+    <title>How R and Python Work Together</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../../../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../../../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../../../../post/">BLOG</a></li>
+        
+        <li><a href="../../../../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../../../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../../../../post/2020/12/11/blog-post/">How R and Python Work Together</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         December 11, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<center>
+<img src="../../../../../post/2020-12-11-blog-post_files/RP.jpg" style="width:75.0%" />
+</center>
+<div id="acomplishing-the-same-goals-with-different-languages" class="section level2">
+<h2>Acomplishing the Same Goals With Different Languages</h2>
+<p><em>Say you want to analyze a particular dataset using R Studio. For example, lets find how many variables and observations are in the 'quakes' dataset and lets find the minimum, maximum, mean, and median values for the variable mag using R Studio</em></p>
+<pre class="r"><code>nrow(quakes)</code></pre>
+<pre><code>## [1] 1000</code></pre>
+<pre class="r"><code>ncol(quakes)</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>min(quakes$mag)</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code>max(quakes$mag)</code></pre>
+<pre><code>## [1] 6.4</code></pre>
+<pre class="r"><code>mean(quakes$mag)</code></pre>
+<pre><code>## [1] 4.6204</code></pre>
+<pre class="r"><code>median(quakes$mag)</code></pre>
+<pre><code>## [1] 4.6</code></pre>
+<pre class="r"><code>quakes&lt;-quakes</code></pre>
+<p><em>Using R Studio, we found that the 'quakes' dataset has 5 variables have 1000 observations. We also found the minimum, maximum, mean, and median of the mag variable are 4, 6.4, 4.6204, and 4.6 respectively. But these lines of code might be unfimiliar to some and clunky to others. Fortunately, Python can acomplish the same goals we had set out to do with R Studio.</em></p>
+<pre class="python"><code>import pandas as pd
+quakes=pd.read_csv(&quot;https://vincentarelbundock.github.io/Rdatasets/csv/datasets/quakes.csv&quot;,index_col=0)
+import numpy as np
+quakes.shape</code></pre>
+<pre><code>## (1000, 5)</code></pre>
+<pre class="python"><code>quakes.mag.describe()</code></pre>
+<pre><code>## count    1000.000000
+## mean        4.620400
+## std         0.402773
+## min         4.000000
+## 25%         4.300000
+## 50%         4.600000
+## 75%         4.900000
+## max         6.400000
+## Name: mag, dtype: float64</code></pre>
+<p><em>These chunks of code from python allows us to find the same dimensions of the 'quakes' datasets and the same minimum, maximum, mean, and median of the varaible mag. All we had to do was import two packages called panda and numpy. In fact, one can argue that python was able to do this more efficiently than R Studio. This is the benefit of knowing more than one coding language. Each language is better at doing specific things like maching learning with Python or statistical learning with R Studio.</em></p>
+</div>
+<div id="reticulate" class="section level2">
+<h2>Reticulate</h2>
+<p><em>Python and R can even talk to each other if you need them to using Reticulate. To demonstrate this, I will assign part of the phrase &quot;I can go back and forth&quot; to R and the other part to Python and combine the two together.</em></p>
+<pre class="r"><code>#This is an R code chunk
+library(reticulate)
+x&lt;-&quot;I can go&quot;</code></pre>
+<pre class="python"><code>#Python code chunk
+y=&quot;back and forth&quot;
+print(r.x,y) </code></pre>
+<pre><code>## I can go back and forth</code></pre>
+<pre class="r"><code>#R code chunk
+cat(c(x,py$y)) </code></pre>
+<pre><code>## I can go back and forth</code></pre>
+<p><em>Reticulate has pratical application other than creating weird phrases. For example, I can create a dataset and R and then use Reticulate to analyze this dataset with Python.</em></p>
+<pre class="r"><code>#R code chunk
+library(reticulate)
+newquakes&lt;-quakes</code></pre>
+<pre class="python"><code>#Python code chunk
+r.newquakes.mag.min()</code></pre>
+<pre><code>## 4.0</code></pre>
+<pre class="python"><code>r.newquakes.mag.max()</code></pre>
+<pre><code>## 6.4000000000000004</code></pre>
+<p><em>Thus, knowing multiple languages allows you to use the best of both worlds to acomplish whatever goals you have set out to achieve.</em></p>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../../../../js/docs.min.js"></script>
+<script src="../../../../../js/main.js"></script>
+
+<script src="../../../../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

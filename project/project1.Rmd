@@ -1,0 +1,136 @@
+---
+title: "Project 1"
+author: "SDS348 Fall 2020"
+date: "2020-12-11"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+---
+
+```{r global_options, include=FALSE}
+#DO NOT EDIT THIS CHUNK OR ANYTHING ABOVE IT!
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, tidy=T, tidy.opts=list(width.cutoff=50), R.options=list(max.print=100,dplyr.print_max=100))
+```
+
+## Joel James (jj35362)
+
+---
+```{R}
+library(ggplot2)
+library(ggrepel)
+library(tidyr)
+library(tidyverse)
+library(dplyr)
+```
+
+```{R}
+county_pop <- read.csv('covid_county_population_usafacts.csv', header=TRUE)
+cases_fatalities <- read.csv('Cases and Fatalities.csv', header=TRUE)
+county_health <- read.csv('2020 County Health Rankings Texas Data - v1_0 (1).csv', header=TRUE)
+county_class <- read.csv('PHR_MSA_County_masterlist.csv', header=TRUE)
+```
+*Introduction: I have chosen to upload four datasets with information about each of Texas' counties. This information includes population size, county ID's, classification, health statistics like the percent of those in each county who smoke and who have diabeties, and finally, the number of people infected with COVID in each county since March 2020. These datasets were obtained from various sources including the CDC, www.countyhealthrankings.org and dshs.texas.gov. This information was of particular interest to me given the current pandemic while considering that I have had family who have directly procured the virus. Thus, I was motivated to see the virus' effects in the State of Texas. In particular, I will be comparing the effects of COVID between counties of different populations and classes while also looking at whether smoking has any affect on the cases of COVID. I predict that non-metropolitan counties will have less cases of COVID that metropolitans and that the cases of COVID will go up as the population does. I also suspect that counties with higher cases of smoking will also have higher cases of COVID.*
+
+```{R}
+cases_fate<-cases_fatalities%>%
+  pivot_wider(names_from="Statistic", values_from="Value")
+```
+*After I uploaded the files, I had to tidy the dataset `cases_fatalities`. Originally, the dataset had all the number of cases of COVID and fatalities in one column with the classification in another. Using pivot_wider, I rearranged the data so that all of the values for the cases of COVID would be in one column and all the values of the fatalities of COVID would be in another column.*
+
+```{R}
+tex_pop<-county_pop%>%filter(State=="TX")
+halfdata <- tex_pop %>% full_join(county_health, by = c("County.Name" = "County"))
+nextdata <- halfdata %>% full_join(county_class, by = c("County.Name" = "County.Name"))
+fulldata<- nextdata%>%full_join(cases_fate, by = c("County.Name" = "County"))
+fulldata<-fulldata%>%na.omit()
+fulldata<-fulldata%>%select(-FIPS)
+fulldata<-fulldata%>%select(-Fatalities)
+fulldata<-fulldata%>%select(-State.y,-State.x,-'X..Adults.with.Obesity',-'countyFIPS')
+fulldata<-fulldata%>%rename(`County Name`=County.Name, `% Smokers`=X..Smokers, 
+  `Metro Area`=Metro.Area, `NCHS Urban Rural Classification (2013)`=
+  NCHS.Urban.Rural.Classification..2013.)
+```
+*The next part of my analysis was to join the four datasets together which all contained 254 observations for each county in Texas. The first step was to remove all the county information from states that were not Texas from `county_pop`. Once this once done, I used full_join to join all the datasets on the bases of county names so that I could retain all of the information from each of the datasets. I then removed NA's which only removed one row that was allocated for information pertaining to people that did not fit into a county. I then removed some unecessary information from the dataset including the county's ID's (FIPS number) and which state the county was in since they were all from Texas. I also removed the total number of fatalities of COVID from each county and the percent of people in each county with obesity. I decided to remove the former column because there was less variation from those dying of COVID compared to those contracting COVID which might make it hard to measure any meanigful effects on death rates. I removed the latter column so that I could focus on the effects of smoking on COVID rather than diabeties since COVID attacks the lungs. Removing this information does come with some disadvantages. For example, I will not be able to see the effects on mortalilty of COVID in each county due to smoking , population, or county classification. I will also miss out on the opportunity to see if diabeties has any effect on COVID. Finally, I renamed some of my columns to make them easier to understand.*
+
+```{R}
+fulldata%>%
+summarize(mean_cases=mean(Cases), sd_cases=sd(Cases), min_cases=min(Cases), 
+          median_cases=median(Cases), max_cases=max(Cases))
+fulldata%>%group_by(`Metro Area`)%>%
+summarize(mean_cases=mean(Cases), sd_cases=sd(Cases), min_cases=min(Cases), 
+          median_cases=median(Cases), max_cases=max(Cases))
+
+fulldata%>%summarize(`mean_population`=mean(`population`), sd_cases=sd(Cases))
+fulldata%>%group_by(`Metro Area`)%>%summarize(`mean_population`=mean(`population`), sd_cases=sd(Cases))
+
+fulldata%>%summarize(`mean_%_smokers`=mean(`% Smokers`), `sd_%_smokers`=sd(`% Smokers`))
+fulldata%>%group_by(`Metro Area`)%>%summarize(`mean_%_smokers`=mean(`% Smokers`), `sd_%_cases`=sd(`% Smokers`))
+
+fulldata%>%group_by(`Metro Area`, `NCHS Urban Rural Classification (2013)`) %>%
+summarize(mean_cases=mean(Cases))
+
+fulldata<-fulldata%>%mutate('%_Cases'=(Cases/population)*100)
+fulldata%>%group_by(`Metro Area`)%>%summarize(`mean_cases_%`=mean(`%_Cases`))
+  
+fulldata%>%select(`County Name`, `Metro Area`, `NCHS Urban Rural Classification (2013)`, Cases)%>%filter(Cases==0)
+
+fulldata%>%select(`%_Cases`, `County Name`, `Metro Area`)%>%arrange(desc(`%_Cases`))
+```
+*For the next part of my analysis, I ran various lines of code to get summary statistics for my data. I first set out on finding some basic summary statistics for each of my numeric variables including the cases of COVID, the population size, and the percent of those who smoke before and after grouping by 'Metro Area'. For cases, grouping revealed that Metro areas generally have higher cases of COVID and experience more variation compared to Non-Metro counties. For population, grouping revealed that Metro counties have higher populations and more variation as well. Finally, grouping revealed that Metro counties have higher variation for % smokers but a lower average of % smokers compared to Non-Metro areas which was an unexpected results. These comparisons would not have been possible had I not grouped by 'Metro Area'.*
+
+*I then calculated some additional statistics for the dataset. The first statistic involves grouping by 'Metro Area' and 'NCHS Urban Rural Classification (2013)' to find the mean cases for the counties. Grouping by both varaibles shows that Large Central Metro	counties have the highest average cases of COVID of all the Metro areas whereas Micropolitan counties have the highest average cases of the Non-Metro Areas. I also found that the impact of COVID between Metro and Non-Metro areas are actually quite similar by looking at the mean percent of cases in county which factors in the population of each county. 3.00% of the population in Metro counties have gotten COVID which is not very different from the 2.97% in Non-Metro counties. I also found that only two counties, which are both Non-Metro and Non-core,	have had zero cases of COVID and that the county which has the most cases of COVID is Martin County which happens to be a Metro county.*
+
+```{R}
+fulldata %>% select_if(is.numeric) %>% cor() 
+fulldata%>%select_if(is.numeric)%>%cor%>%as.data.frame%>%
+  rownames_to_column%>%pivot_longer(-1)%>%
+  ggplot(aes(rowname,name,fill=value))+geom_tile()+
+  geom_text(aes(label=round(value,2)))+
+  xlab("")+ylab("")+coord_fixed()+
+  ggtitle("Correlation Heatmap of Numeric Variables")
+```
+*The next part of my analysis was to see if there was any correlation between my numeric variables including the cases of COVID, the population size, the percent of those who smoke, and the new variable which is the % cases of COVID for each county. Based on the table and the heat map, the population of a county and the number of COVID cases for that county were the only two numeric varaibles with a strong correlation. This was not a surprise to me but I also had to conclude that smoking does not affect the total cases or the % cases of COVID which was unexpected.*
+
+
+```{R}
+ggplot(data=fulldata, aes(x=`% Smokers`, y=`Cases`, color=`Metro Area`))+
+  geom_point()+ ggtitle("Smoking's Effect on COVID Cases") + 
+  ylab("Total Cases") + xlab("% Smokers") + geom_smooth(method = "lm")+
+  scale_x_continuous(breaks = seq(0, 20, 1))+
+  scale_y_continuous(breaks = seq(0, 150000, 10000))
+```
+*This graph is another confirmation of my earlier conclusion. The percent of the population of smokers for the counties is plotted on the x-axis and the total cases of COVID is plotted on the y-axis. Since the trendline lines are nearly horizontal, I can conclude that there is practically no relation between smoking and contracting COVID which goes against my predicted results.*
+
+```{R}
+ggplot(data = fulldata, aes(x = `NCHS Urban Rural Classification (2013)`, y = `%_Cases`)) + 
+    geom_bar(stat = "summary", fun = mean, aes(fill = `Metro Area`)) + 
+    scale_fill_brewer() + scale_y_continuous(breaks = seq(0, 
+    150, 25)) + ggtitle("COVID Cases by Metro Area and Classification") + 
+    ylab("% Cases of COVID") + xlab("Metro Classification") + 
+    geom_errorbar(stat = "summary", fun.data = mean_se, 
+        width = 0.5)+ theme(axis.text.x = element_text(angle=45, hjust=1))
+```
+*This graph shows the effects of the different categorical variables on the percent cases of covid for Texas counties. Based on the graph, there is not much of a difference between between Metro and Non-Metro areas in % Cases of COVID which was the same conclusion we reached earlier. However we are able to reach another conclusion based on this graph since Small Metro counties, which are part of Metro counties, seems to be the classification of counties with the highest % cases of COVID. This category also has the most variation of % cases compared to the other classifications.*
+
+```{R}
+fulldata %>% select_if(is.numeric)%>% scale() %>% prcomp() -> full_pca
+summary(full_pca)
+
+fulldata %>% select_if(is.numeric) %>% cor() %>% eigen()
+
+full_pca$rotation[,1:2]%>%as.data.frame%>%rownames_to_column%>%ggplot()+geom_hline(aes(yintercept=0),lty=2)+ geom_vline(aes(xintercept=0),lty=2)+ylab("PC2")+xlab("PC1")+
+  geom_segment(aes(x=0,y=0,xend=PC1,yend=PC2),arrow=arrow(),col="red")+
+  geom_label(aes(x=PC1*1.1,y=PC2*1.1,label=rowname))
+
+full_pca$x%>%as.data.frame%>%mutate(State=fulldata$`County Name`)%>%ggplot(aes(PC1,PC2))+geom_point()
+```
+*Finally, the last part of my analysis involves doing a PCA on my data. The first step was to select the columns of my data that were numeric before doing a PCA. After the analysis, I concluded that I would keep the first three principle components since they accounted for 99.12% of the variation cumulatively in the dataset whereas the first two components only account for 75.14% of the variation cumulatively which is below 80%. I also concluded that PC1 accounts for 49.45% of the variation in the data set and the second accounts for 25.70%. Both are not very good which is why PC3 is needed. Finally, I was able to conclude from the first plot that PC2 does a good job of explaining % cases and % smokers since the angles between these variable and the y-axis is small whereas PC1 does a good job of explaining total cases and population since the angles between these variable and the x-axis is small. The angle between cases and population was also small which indicates a higher relationship, just as I had concluded earlier.*
+
+```{R, echo=F}
+## DO NOT DELETE THIS BLOCK!
+sessionInfo()
+Sys.time()
+Sys.info()
+```

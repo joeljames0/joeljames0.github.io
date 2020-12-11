@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on My Project</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on My Project</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 11 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How R and Python Work Together</title>
+      <link>/post/2020/12/11/blog-post/</link>
+      <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/11/blog-post/</guid>
+      <description>Acomplishing the Same Goals With Different Languages Say you want to analyze a particular dataset using R Studio. For example, lets find how many variables and observations are in the &#39;quakes&#39; dataset and lets find the minimum, maximum, mean, and median values for the variable mag using R Studio
+nrow(quakes) ## [1] 1000 ncol(quakes) ## [1] 5 min(quakes$mag) ## [1] 4 max(quakes$mag) ## [1] 6.4 mean(quakes$mag) ## [1] 4.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,72 @@
+---
+title: How R and Python Work Together
+author: ''
+date: '2020-12-11'
+slug: blog-post
+categories: []
+tags: []
+description: ''
+---
+
+<center>
+![](/post/2020-12-11-blog-post_files/RP.jpg){width=75%}
+</center>
+
+##Acomplishing the Same Goals With Different Languages
+
+*Say you want to analyze a particular dataset using R Studio. For example, lets find how many variables and observations are in the 'quakes' dataset and lets find the minimum, maximum, mean, and median values for the variable mag using R Studio*
+
+```{R}
+nrow(quakes)
+ncol(quakes)
+min(quakes$mag)
+max(quakes$mag)
+mean(quakes$mag)
+median(quakes$mag)
+quakes<-quakes
+```
+
+*Using R Studio, we found that the 'quakes' dataset has 5 variables have 1000 observations. We also found the minimum, maximum, mean, and median of the mag variable are 4, 6.4, 4.6204, and 4.6 respectively. But these lines of code might be unfimiliar to some and clunky to others. Fortunately, Python can acomplish the same goals we had set out to do with R Studio.*
+
+```{python}
+import pandas as pd
+quakes=pd.read_csv("https://vincentarelbundock.github.io/Rdatasets/csv/datasets/quakes.csv",index_col=0)
+import numpy as np
+quakes.shape
+quakes.mag.describe()
+```
+
+*These chunks of code from python allows us to find the same dimensions of the 'quakes' datasets and the same minimum, maximum, mean, and median of the varaible mag. All we had to do was import two packages called panda and numpy. In fact, one can argue that python was able to do this more efficiently than R Studio. This is the benefit of knowing more than one coding language. Each language is better at doing specific things like maching learning with Python or statistical learning with R Studio.*
+
+##Reticulate
+
+*Python and R can even talk to each other if you need them to using Reticulate. To demonstrate this, I will assign part of the phrase "I can go back and forth" to R and the other part to Python and combine the two together.*
+
+```{R}
+#This is an R code chunk
+library(reticulate)
+x<-"I can go"
+```
+```{python}
+#Python code chunk
+y="back and forth"
+print(r.x,y) 
+```
+```{R}
+#R code chunk
+cat(c(x,py$y)) 
+```
+
+*Reticulate has pratical application other than creating weird phrases. For example, I can create a dataset and R and then use Reticulate to analyze this dataset with Python.*
+
+```{R}
+#R code chunk
+library(reticulate)
+newquakes<-quakes
+```
+```{python}
+#Python code chunk
+r.newquakes.mag.min()
+r.newquakes.mag.max()
+```
+*Thus, knowing multiple languages allows you to use the best of both worlds to acomplish whatever goals you have set out to achieve.*
