@@ -57,7 +57,7 @@ print(r.x,y)
 cat(c(x,py$y)) 
 ```
 
-*Reticulate has pratical application other than creating weird phrases. For example, I can create a dataset and R and then use Reticulate to analyze this dataset with Python.*
+*Reticulate has pratical application other than creating weird phrases. For example, I can create a dataset in R and then use Reticulate to analyze this dataset with Python.*
 
 ```{R}
 #R code chunk
@@ -69,4 +69,4 @@ newquakes<-quakes
 r.newquakes.mag.min()
 r.newquakes.mag.max()
 ```
-*Thus, knowing multiple languages allows you to use the best of both worlds to acomplish whatever goals you have set out to achieve.*
+*Using python, I was able to find the minimum and maximum values of the variable mag for a new dataset called 'newquakes' that only exists in R Thus, Reticulate shows how Python and R talk to each other and share information across code chunks. It also shows that knowing multiple languages allows you to use the best of both worlds to acomplish whatever goals you have set out to achieve.*
