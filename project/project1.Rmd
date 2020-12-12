@@ -1,6 +1,6 @@
 ---
 title: "Project 1"
-author: "SDS348 Fall 2020"
+author: "Joel James"
 date: "2020-12-11"
 output:
   html_document:
@@ -14,7 +14,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, tidy=T, tidy.opts=list(width.cutoff=50), R.options=list(max.print=100,dplyr.print_max=100))
 ```
 
-## Joel James (jj35362)
 
 ---
 ```{R}
